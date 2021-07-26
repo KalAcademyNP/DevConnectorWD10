@@ -7,6 +7,9 @@ const router = express.Router();
 const User = require('../../models/User');
 const keys = require('../../config/keys');
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
+
 
 //@route   POST  api/users/register
 //@desc    Register a user
@@ -57,6 +60,13 @@ router.post('/register', (req, res) => {
 //@desc    Login a user and generate a token
 //@access  Public 
 router.post('/login', (req,res)=>{
+  //validation
+  const {errors, isValid} = validateLoginInput(req.body);
+  
+  if(!isValid){
+    return res.status(400).json(errors);
+  }
+
   User.findOne({email: req.body.email})
     .then(user => {
       if (!user){
